@@ -15,13 +15,16 @@
   <!-- ===== Connected System Template ===== -->
   <!-- Broker connection configuration (URL, Client ID, credentials, keep-alive) -->
   <connected-system-template key="mqttConnectedSystem"
-      class="com.example.appian.mqtt.templates.MqttConnectedSystemTemplate"/>
+      name="MQTT Connected System"
+      class="com.example.appian.mqtt.templates.MqttConnectedSystemTemplate">
 
-  <!-- ===== Integration Template ===== -->
-  <!-- Low-code MQTT publish from Integration Designer -->
-  <integration-template key="mqttPublishIntegration"
-      class="com.example.appian.mqtt.templates.MqttPublishIntegrationTemplate"
-      connected-system-template="mqttConnectedSystem"/>
+    <!-- ===== Integration Template ===== -->
+    <!-- Low-code MQTT publish from Integration Designer -->
+    <integration-template key="mqttPublishIntegration"
+        name="MQTT Publish"
+        class="com.example.appian.mqtt.templates.MqttPublishIntegrationTemplate"/>
+
+  </connected-system-template>
 
   <!-- ===== Smart Services ===== -->
   <!-- MQTT Publish: process model node for publishing messages -->
