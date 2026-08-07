@@ -120,6 +120,31 @@
   <build>
     <plugins>
 
+      <!--
+        build-helper-maven-plugin: adds src/main/stubs as a compile-only source root.
+        These stubs provide Appian SDK interfaces for compilation but are NOT
+        included in the packaged JAR — Appian provides them at runtime.
+      -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.5.0</version>
+        <executions>
+          <execution>
+            <id>add-stub-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.basedir}/src/main/stubs</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <!-- Java compiler plugin – enforce Java 17 -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -145,6 +170,16 @@
             </goals>
             <configuration>
               <createDependencyReducedPom>false</createDependencyReducedPom>
+              <!-- Exclude Appian SDK stub classes — provided by Appian at runtime -->
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>com/appian/**</exclude>
+                    <exclude>com/appiancorp/**</exclude>
+                  </excludes>
+                </filter>
+              </filters>
             </configuration>
           </execution>
         </executions>
@@ -154,6 +189,7 @@
         Maven JAR plugin
         src/main/resources/appian-plugin.xml is automatically placed
         at the JAR root by Maven's resource phase — no extra config needed.
+        Excludes Appian SDK stub classes that are only needed at compile time.
       -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -161,6 +197,10 @@
         <version>3.3.0</version>
         <configuration>
           <finalName>${project.artifactId}-${project.version}</finalName>
+          <excludes>
+            <exclude>com/appian/**</exclude>
+            <exclude>com/appiancorp/**</exclude>
+          </excludes>
         </configuration>
       </plugin>
 
