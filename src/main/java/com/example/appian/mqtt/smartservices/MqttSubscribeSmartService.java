@@ -147,8 +147,9 @@ public class MqttSubscribeSmartService extends AppianSmartService {
     public void setJsonFilterExpression(String jsonFilterExpression) { this.jsonFilterExpression = jsonFilterExpression; }
 
     // --- Non-annotation setter for dependency injection (used in persistent mode) ---
-
-    public void setProcessExecutionService(ProcessExecutionService processExecutionService) {
+    // NOTE: ProcessExecutionService must NOT be exposed as a public setter because
+    // Appian's smart service framework will attempt to resolve it as an input type.
+    void setProcessExecutionService(ProcessExecutionService processExecutionService) {
         this.processExecutionService = processExecutionService;
     }
 
