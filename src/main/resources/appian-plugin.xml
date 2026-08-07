@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appian-plugin key="com.example.appian.mqtt" name="Appian MQTT Connected System">
+
+  <plugin-info>
+    <description>
+      MQTT 3.1.1 Connected System Plug-in for IoT edge connectivity.
+      Provides publish/subscribe integration with MQTT brokers via
+      Connected System, Integration Template, Smart Service, and Expression Function.
+    </description>
+    <vendor name="Example Org" url="https://example.com"/>
+    <version>1.0.0</version>
+    <application-version min="26.0"/>
+  </plugin-info>
+
+  <!-- ===== Connected System Template ===== -->
+  <!-- Broker connection configuration (URL, Client ID, credentials, keep-alive) -->
+  <connected-system-template key="mqttConnectedSystem"
+      class="com.example.appian.mqtt.templates.MqttConnectedSystemTemplate"/>
+
+  <!-- ===== Integration Template ===== -->
+  <!-- Low-code MQTT publish from Integration Designer -->
+  <integration-template key="mqttPublishIntegration"
+      class="com.example.appian.mqtt.templates.MqttPublishIntegrationTemplate"
+      connected-system-template="mqttConnectedSystem"/>
+
+  <!-- ===== Smart Services ===== -->
+  <!-- MQTT Publish: process model node for publishing messages -->
+  <smart-service key="mqttPublishSmartService" name="MQTT Publish"
+      class="com.example.appian.mqtt.smartservices.MqttPublishSmartService"/>
+
+  <!-- MQTT Subscribe: one-shot collection or persistent background listener -->
+  <smart-service key="mqttSubscribeSmartService" name="MQTT Subscribe"
+      class="com.example.appian.mqtt.smartservices.MqttSubscribeSmartService"/>
+
+  <!-- ===== Expression Functions ===== -->
+  <function-category key="mqttFunctions" name="MQTT Functions"/>
+  <!-- mqttPublish(brokerUrl, clientId, topic, payload, qos) -> JSON result -->
+  <function key="mqttPublishFunction"
+      class="com.example.appian.mqtt.functions.MqttPublishFunction"/>
+
+</appian-plugin>

@@ -1,0 +1,22 @@
+# Git ignore rules for Appian Plugin Test
+
+# ── Appian SDK JAR (obtained from Appian installation, not committed) ──────
+libs/appian-plug-in-sdk.jar
+
+# ── Maven build output ─────────────────────────────────────────────────────
+target/
+
+# ── Maven Wrapper JAR (downloaded automatically) ───────────────────────────
+.mvn/wrapper/maven-wrapper.jar
+
+# ── IDE files ──────────────────────────────────────────────────────────────
+.idea/
+*.iml
+.eclipse/
+.settings/
+.classpath
+.project
+
+# ── OS files ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
