@@ -124,11 +124,11 @@ public class MqttSubscribeSmartService extends AppianSmartService {
 
     @Input(required = Required.OPTIONAL, order = 9)
     @Order(9)
-    public void setTimeoutMs(Long timeoutMs) { this.timeoutMs = timeoutMs; }
+    public void setTimeoutMs(Integer timeoutMs) { this.timeoutMs = timeoutMs != null ? timeoutMs.longValue() : null; }
 
     @Input(required = Required.OPTIONAL, order = 10)
     @Order(10)
-    public void setProcessModelId(Long processModelId) { this.processModelId = processModelId; }
+    public void setProcessModelId(Integer processModelId) { this.processModelId = processModelId != null ? processModelId.longValue() : null; }
 
     @Input(required = Required.OPTIONAL, order = 11)
     @Order(11)
