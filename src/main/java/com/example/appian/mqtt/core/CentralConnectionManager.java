@@ -89,6 +89,9 @@ public class CentralConnectionManager {
             int connectionTimeout,
             boolean cleanSession) throws MqttException {
 
+        // Normalize protocol scheme for Paho compatibility
+        brokerUrl = normalizeScheme(brokerUrl);
+
         String connectionKey = buildConnectionKey(brokerUrl, clientId);
 
         // Check for existing connected socket
@@ -228,6 +231,21 @@ public class CentralConnectionManager {
             LOG.info("Idle socket eviction complete. Evicted: " + evictedCount
                     + ", remaining: " + connectionRegistry.size());
         }
+    }
+
+    /**
+     * Normalizes the broker URL scheme for Paho compatibility.
+     * mqtt:// → tcp://, mqtts:// → ssl://
+     */
+    static String normalizeScheme(String brokerUrl) {
+        if (brokerUrl == null) return brokerUrl;
+        if (brokerUrl.startsWith("mqtt://")) {
+            return "tcp://" + brokerUrl.substring("mqtt://".length());
+        }
+        if (brokerUrl.startsWith("mqtts://")) {
+            return "ssl://" + brokerUrl.substring("mqtts://".length());
+        }
+        return brokerUrl;
     }
 
     /**
