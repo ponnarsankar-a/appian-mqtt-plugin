@@ -40,31 +40,28 @@
        ========================================================= -->
   <dependencies>
 
-    <!--
-      ╔══════════════════════════════════════════════════════════╗
-      ║  IMPORTANT: Appian Plug-in SDK                          ║
-      ║                                                          ║
-      ║  The appian-plug-in-sdk JAR is NOT on Maven Central.   ║
-      ║  You must obtain it from your Appian installation at:   ║
-      ║    <APPIAN_HOME>/_admin/sdk/appian-plug-in-sdk.jar      ║
-      ║                                                          ║
-      ║  Then copy it to:  libs/appian-plug-in-sdk.jar          ║
-      ║  (relative to this pom.xml — create the libs/ folder)  ║
-      ║                                                          ║
-      ║  OR install it to your local .m2 repo once and use the  ║
-      ║  -Plocal-m2 profile (see Profiles section below).       ║
-      ║                                                          ║
-      ║  scope=system: references the local libs/ JAR directly. ║
-      ║  The JAR is NOT bundled into the output — Appian        ║
-      ║  provides it at runtime via the _admin/plugins/ loader. ║
-      ╚══════════════════════════════════════════════════════════╝
-    -->
+    <!-- Appian Connected Systems Core SDK (from Maven Central) -->
+    <dependency>
+      <groupId>com.appian</groupId>
+      <artifactId>connected-systems-core</artifactId>
+      <version>1.2.0</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Appian Connected Systems Client SDK (from Maven Central) -->
+    <dependency>
+      <groupId>com.appian</groupId>
+      <artifactId>connected-systems-client</artifactId>
+      <version>1.1.0</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Appian Plug-in SDK for Smart Services and Expression Functions -->
     <dependency>
       <groupId>com.appian</groupId>
       <artifactId>appian-plug-in-sdk</artifactId>
       <version>${appian.sdk.version}</version>
       <scope>system</scope>
-      <!-- Copy the SDK JAR from <APPIAN_HOME>/_admin/sdk/ to this path -->
       <systemPath>${project.basedir}/libs/appian-plug-in-sdk.jar</systemPath>
     </dependency>
 
@@ -122,8 +119,8 @@
 
       <!--
         build-helper-maven-plugin: adds src/main/stubs as a compile-only source root.
-        These stubs provide Appian SDK interfaces for compilation but are NOT
-        included in the packaged JAR — Appian provides them at runtime.
+        These stubs provide Appian Suite API classes (ProcessExecutionService, etc.)
+        that are not published to Maven Central but are provided by Appian at runtime.
       -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -170,12 +167,10 @@
             </goals>
             <configuration>
               <createDependencyReducedPom>false</createDependencyReducedPom>
-              <!-- Exclude Appian SDK stub classes — provided by Appian at runtime -->
               <filters>
                 <filter>
                   <artifact>*:*</artifact>
                   <excludes>
-                    <exclude>com/appian/**</exclude>
                     <exclude>com/appiancorp/**</exclude>
                   </excludes>
                 </filter>
@@ -189,7 +184,6 @@
         Maven JAR plugin
         src/main/resources/appian-plugin.xml is automatically placed
         at the JAR root by Maven's resource phase — no extra config needed.
-        Excludes Appian SDK stub classes that are only needed at compile time.
       -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -198,7 +192,6 @@
         <configuration>
           <finalName>${project.artifactId}-${project.version}</finalName>
           <excludes>
-            <exclude>com/appian/**</exclude>
             <exclude>com/appiancorp/**</exclude>
           </excludes>
         </configuration>
@@ -213,39 +206,5 @@
 
     </plugins>
   </build>
-
-  <!-- =========================================================
-       Profiles
-       =========================================================
-
-       Profile: local-m2   (for CI/CD or shared environments)
-       ─────────────────────────────────────────────────────────
-       After installing the SDK JAR into your local .m2 repo:
-
-         ./mvnw install:install-file \
-           -Dfile=libs/appian-plug-in-sdk.jar \
-           -DgroupId=com.appian \
-           -DartifactId=appian-plug-in-sdk \
-           -Dversion=26.7 \
-           -Dpackaging=jar
-
-       You can then build with the provided scope (better for CI):
-
-         ./mvnw clean package -Plocal-m2
-
-       ========================================================= -->
-  <profiles>
-    <profile>
-      <id>local-m2</id>
-      <dependencies>
-        <dependency>
-          <groupId>com.appian</groupId>
-          <artifactId>appian-plug-in-sdk</artifactId>
-          <version>${appian.sdk.version}</version>
-          <scope>provided</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
 
 </project>

@@ -2,8 +2,12 @@ package com.example.appian.mqtt.templates;
 
 import com.appian.connectedsystems.simplified.sdk.SimpleIntegrationTemplate;
 import com.appian.connectedsystems.simplified.sdk.configuration.SimpleConfiguration;
-import com.appian.connectedsystems.template.annotations.TemplateId;
 import com.appian.connectedsystems.templateframework.sdk.ExecutionContext;
+import com.appian.connectedsystems.templateframework.sdk.IntegrationError;
+import com.appian.connectedsystems.templateframework.sdk.IntegrationResponse;
+import com.appian.connectedsystems.templateframework.sdk.TemplateId;
+import com.appian.connectedsystems.templateframework.sdk.configuration.PropertyPath;
+import com.appian.connectedsystems.templateframework.sdk.diagnostics.IntegrationDesignerDiagnostic;
 import com.example.appian.mqtt.core.CentralConnectionManager;
 import com.example.appian.mqtt.core.SocketHolder;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -39,6 +43,7 @@ public class MqttPublishIntegrationTemplate extends SimpleIntegrationTemplate {
     protected SimpleConfiguration getConfiguration(
             SimpleConfiguration integrationConfiguration,
             SimpleConfiguration connectedSystemConfiguration,
+            PropertyPath propertyPath,
             ExecutionContext executionContext) {
 
         return integrationConfiguration.setProperties(
@@ -49,23 +54,20 @@ public class MqttPublishIntegrationTemplate extends SimpleIntegrationTemplate {
                 textProperty(PROP_PAYLOAD)
                         .label("Payload (JSON/Text)")
                         .isRequired(true)
-                        .isMultiline(true)
                         .build(),
                 integerProperty(PROP_QOS)
                         .label("QoS Level (0, 1, or 2)")
                         .isRequired(true)
-                        .defaultValue(0)
                         .build(),
                 booleanProperty(PROP_RETAINED)
                         .label("Retain Message")
                         .isRequired(false)
-                        .defaultValue(false)
                         .build()
         );
     }
 
     @Override
-    protected ExecutionResult execute(
+    protected IntegrationResponse execute(
             SimpleConfiguration integrationConfiguration,
             SimpleConfiguration connectedSystemConfiguration,
             ExecutionContext executionContext) {
@@ -110,13 +112,18 @@ public class MqttPublishIntegrationTemplate extends SimpleIntegrationTemplate {
             diagnosticOutput.put("payloadSize", payload != null ? payload.length() : 0);
 
             LOG.info("MQTT publish successful: topic=" + topic + ", qos=" + qosLevel);
-            return ExecutionResult.success(diagnosticOutput);
+            return IntegrationResponse.forSuccess(diagnosticOutput).build();
 
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "MQTT publish failed: topic=" + topic, e);
             diagnosticOutput.put("status", "ERROR");
             diagnosticOutput.put("errorMessage", e.getMessage());
-            return ExecutionResult.error("MQTT_PUBLISH_FAILED", e.getMessage(), diagnosticOutput);
+
+            IntegrationError error = IntegrationError.builder()
+                    .title("MQTT Publish Failed")
+                    .message(e.getMessage())
+                    .build();
+            return IntegrationResponse.forError(error).build();
         }
     }
 }

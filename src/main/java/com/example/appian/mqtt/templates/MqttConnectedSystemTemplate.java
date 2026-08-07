@@ -2,8 +2,8 @@ package com.example.appian.mqtt.templates;
 
 import com.appian.connectedsystems.simplified.sdk.SimpleConnectedSystemTemplate;
 import com.appian.connectedsystems.simplified.sdk.configuration.SimpleConfiguration;
-import com.appian.connectedsystems.template.annotations.TemplateId;
 import com.appian.connectedsystems.templateframework.sdk.ExecutionContext;
+import com.appian.connectedsystems.templateframework.sdk.TemplateId;
 
 /**
  * MQTT Connected System Template for Appian Designer.
@@ -56,12 +56,10 @@ public class MqttConnectedSystemTemplate extends SimpleConnectedSystemTemplate {
                 integerProperty(PROP_KEEP_ALIVE)
                         .label("Keep Alive (seconds)")
                         .isRequired(false)
-                        .defaultValue(60)
                         .build(),
                 booleanProperty(PROP_CLEAN_SESSION)
                         .label("Clean Session")
                         .isRequired(false)
-                        .defaultValue(true)
                         .build()
         );
     }
